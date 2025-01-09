@@ -26,7 +26,7 @@ A simple ESP-01 project to switch devices ON and OFF on a schedule, controlled v
 - Install the "Preferences" library (e.g., through Arduino Library Manager).
 
 ## How to Flash
-1. Download the [esp1_relay.ino]() file.
+1. Download the [esp1_relay.ino](https://github.com/Sarin-jacob/Esp01-WiFi-Relay/releases/latest/download/v1.0/esp1_relay.ino) file.
 2. Connect the ESP-01 to your computer via USB with ESP-01 Programmer.
 3. Open the `esp1_relay.ino` file in the Arduino IDE 
 4. Select the appropriate board (e.g., "NodeMCU 1.0 (ESP-12E Module)") and COM port.

@@ -12,13 +12,13 @@ A simple ESP-01 project to switch devices ON and OFF on a schedule, controlled v
 - Relay module 
 - ESP-01 Programmer
 <div>
-<img src="images/ESP8266-ESP-01-5V-WiFi-Relay-Module.png" alt="Relay Module" style="max-width:200px;">
-<img src="images/esp01-programmer.webp" alt="ESP-01 Programmer" style="max-width:200px;">
+<img src="images/ESP8266-ESP-01-5V-WiFi-Relay-Module.png" alt="Relay Module" width="200px">
+<img src="images/esp01-programmer.webp" alt="ESP-01 Programmer" width="200px">
 </div>
 
 ## Typical Circuit
 <div>
-<img src="images/esp-01-circuit.webp" alt="Relay Circuit" style="max-width:400px;">
+<img src="images/esp-01-circuit.webp" alt="Relay Circuit" width="400px">
 </div>
 
 ## Prerequisites
@@ -35,8 +35,8 @@ A simple ESP-01 project to switch devices ON and OFF on a schedule, controlled v
 ## Screenshots
 <details><summary>Show screenshots</summary>
 
-<img src="images/Relay_control.png" alt="Relay Control" style="max-width:300px;">
-<img src="images/configure_wifi.png" alt="Configure WiFi" style="max-width:300px;">
+<img src="images/Relay_control.png" alt="Relay Control" width="300px">
+<img src="images/configure_wifi.png" alt="Configure WiFi" width="300px">
 
 </details>
 

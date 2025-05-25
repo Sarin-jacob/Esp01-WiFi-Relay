@@ -3,6 +3,7 @@
 #include <ESP8266mDNS.h>
 #include <Preferences.h> // Include Preferences library
 #include <time.h>
+#include <DNSServer.h>
 
 #define RELAY_PIN 0
 
@@ -10,6 +11,8 @@ const char* Rname = "sprinkler";
 ESP8266WebServer server(80);
 
 Preferences preferences; // Preferences object
+DNSServer dnsServer;
+
 
 String homeSSID = "";
 String homePassword = "";
@@ -19,6 +22,7 @@ int startTime = 0; // Start time in seconds from midnight
 int endTime = 0;   // End time in seconds from midnight
 bool relayState = false;
 bool manualOverride = false;
+bool softap = false;
 
 unsigned long lastSyncTime = 0; // To track the last synchronization time
 const unsigned long syncInterval = 1800000; // 30 minutes in milliseconds
@@ -88,13 +92,25 @@ void syncTime() {
 }
 
 void setupAPMode() {
+    softap=true;
     WiFi.mode(WIFI_AP);
     WiFi.softAP(Rname);
+    dnsServer.start(53, "*", WiFi.softAPIP());
     Serial.println("AP Mode: Hosting reset page at http://"+ String(Rname) +".local/rst");
     server.on("/", []() {
       server.sendHeader("Location", "/rst", true); // Redirect to /rst
       server.send(302, "text/plain", "Redirecting to WiFi Configuration page...");
     });
+
+  server.onNotFound([]() {
+    Serial.print("NOT_FOUND path: ");
+    Serial.println(server.uri());
+    server.send(200, "text/html",
+    "<html><head><meta http-equiv='refresh' content='0; url=/' /></head>"
+    "<body><p>Redirecting...</p></body></html>");
+  });
+
+
 }
 
 void handleResetPage() {
@@ -126,6 +142,7 @@ void handleConnectPage() {
 
         if (WiFi.status() == WL_CONNECTED) {
             WiFi.softAPdisconnect(true);
+            softap=false;
             syncTime(); // Sync time after connecting
             server.on("/", []() {
               server.sendHeader("Location", "/con", true); // Redirect to /rst
@@ -135,8 +152,8 @@ void handleConnectPage() {
         } else {
             Serial.println("Failed to connect. Restarting AP Mode.");
             setupAPMode();
-        }
 
+        }
         server.sendHeader("Location", "/con");
         server.send(302, "text/plain", "Redirecting...");
     }
@@ -251,13 +268,13 @@ void setup() {
           server.send(302, "text/plain", "Redirecting to Sprinkler Control page...");
         });
     }
-
+    
 
     if (!MDNS.begin(Rname)) {
         Serial.println("Error starting mDNS");
     }
     MDNS.addService("http", "tcp", 80);
-
+    server.on("/favicon.ico",[](){server.send(204,"text/plain","")})
     server.on("/rst", handleResetPage);
     server.on("/connect", handleConnectPage);
     server.on("/settime", handleSetTime);
@@ -272,6 +289,7 @@ void setup() {
 void loop() {
     MDNS.update();
     server.handleClient();
+    if(softap)dnsServer.processNextRequest();
 
     if (!manualOverride && WiFi.status() == WL_CONNECTED) {
         time_t now = time(nullptr);
